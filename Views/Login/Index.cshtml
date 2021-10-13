@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="wrapper">
+    <div class="form-control-lg">
+        <form id="form_cupon" runat="server" method="post">
+            <div class="form-control">
+                <div class="col-md6 text-center mb-5">
+
+                    <label class="h3" ID="lblBienvenida" runat="server"> Cupones Krispy Kreme </label>
+                </div>
+                <div>
+                    <label ID="lblUsuario" runat="server">Usuario:</label>
+                    <input name="txtUsuario" class="form-control" runat="server" placeholder="Usuario">
+                </div>
+                <div>
+                    <label ID="lblPassword" runat="server">Contraseña:</label>
+                    <input name="txtPassword" class="form-control" type="Password" runat="server" placeholder="Contraseña">
+                </div>
+                <hr />
+                <div class="row">
+                    <label ID="lblError" runat="server" class="alert-danger"></label>
+                </div>
+                <br />
+
+                <div class="modal-footer">
+                    <button type="submit" ID="btnRegistrar" align="center" class="btn btn-success">Registrar</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    @{
+        if (TempData["msg"]!=null)
+        {
+            <script type="text/javascript">
+                alert('@TempData["msg"]');
+            </script>
+        }
+    }
+</div>
+}

@@ -1,0 +1,294 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row m-5">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+
+                Control de Cupones          Usuario de la Sesión:  @Session["usuariologueado"]
+            </div>
+            <div class="card-body">
+                <table id="tbCupon" class="display responsive nowrap" width="100%">
+                    <thead>
+                        <tr>
+                            <th> Cupón </th>
+                            <th> Sucursal </th>
+                            <th> Vigencia </th>
+                            <th> Descripción </th>
+                            <th> Estado </th>
+                            <th> Consumido </th>
+                            <th>  </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+
+
+<div class="modal fade" id="FormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Operación </h5>
+                <button type="button" class="close" style="border:none; background:none; text-size-adjust:150%" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+
+                        <input type="hidden" id="txtIdCode" />
+                        <div class="form-group">
+                            <label for="dtVigencia">Vigencia:</label>
+                            <input type="date" class="form-control" id="dtVigencia" name="dtVigencia">
+                        </div>
+                        <div class="form-group">
+                            <label for="txtSucursal">Sucursal:</label>
+                            <input type="text" class="form-control" id="txtSucursal">
+                        </div>
+                        <div class="form-group">
+                            <label for="txtCantidad">Cupones a Generar:</label>
+                            <input type="text" class="form-control" id="txtCantidad" name="txtCantidad">
+                        </div>
+                        <div class="form-group">
+                            <label for="chkEstatus">Activo:</label><input type="checkbox" runat="server" id="chkEstatus" class="check_01" name="chkEstatus">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="txtDescripcion">Descripción:</label>
+                            <input type="text" class="form-control" id="txtDescripcion" name="txtDescripcion">
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+}
+@section Scripts{
+    <script>
+        var tabla_cupon;
+
+    $(document).ready(function () {
+        tabla_cupon = $('#tbCupon').DataTable({
+                    "ajax": {
+                        "url": "@Url.Action("Listar","Cupon")",
+                "type": "GET",
+                "responsive": true,
+                "dataType" : "json"
+                    },
+
+            "columns": [
+                { "data": "cupon1" },
+                { "data": "sucursal" },
+                {
+                        "data": "vigencia", "render": function (value) {
+                            if (value === null) return "";
+
+                            var pattern = /Date\(([^)]+)\)/;
+                            var results = pattern.exec(value);
+                            var dt = new Date(parseFloat(results[1]));
+
+                            var dd = dt.getDate();
+                            var mm = dt.getMonth() + 1;
+                            var yyyy = dt.getFullYear();
+
+                            if (dd < 10) { dd = '0' + dd };
+                            if (mm < 10) { mm = '0' + mm };
+
+                            return (dd + "/" + mm + "/" + yyyy);
+                        }
+                    },
+
+                { "data": "descripcion" },
+                {
+                        "data": "estatus", "render": function (value) {
+                            if (value === null) return "";
+                            if (value === true) return "Activo"
+                                else return "Cancelado";
+
+                        } },
+                {
+                        "data": "consumido", "render": function (value) {
+
+                            if (value === true) return "Si"
+                            else return "No";
+
+                    }
+                },
+                {
+                        "data": "idcode", "render": function (data) {
+                            return "<button class='btn btn-primary btn-sm' type='button' onclick='abrirModal(" + data + ")'><i class='fas fa-pen'></i></button>" +
+                                "<button class='btn btn-danger btn-sm ml-2' type='button' onclick='Eliminar(" + data + ")'><i class='fa fa-trash'></i></button>"
+                        },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "150px"
+                }
+            ],
+            dom: 'Bfrtip',
+                buttons: [
+                    {
+                    text: 'Agregar Nuevo',
+                        attr: { class: 'btn btn-success btn-sm' },
+                        action: function (e, dt, node, config) {
+        abrirModal(0)
+                        }
+                    },
+                    {
+    extend: 'excelHtml5',
+                        text: 'Exportar a Excel',
+                        attr: { class: 'btn btn-success btn-sm' },
+                        exportOptions: {
+    modifier: {
+        page: 'current'
+                            }
+    }
+                    }
+                 ],
+                 "language": {
+        "url": "@Url.Content("~/Content/datatable/idioma/datatable.es-ES.json")"
+                 }
+
+            });
+        });
+
+        function ToJavaScriptDate(value) {
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+
+            var dd = dt.getDate();
+            var mm = dt.getMonth() + 1;
+            var yyyy = dt.getFullYear();
+
+            if (dd < 10) { dd = '0' + dd };
+            if (mm < 10) { mm = '0' + mm };
+
+            return (yyyy + "-" + mm + "-" + dd);
+        }
+
+        function abrirModal($idcode) {
+            $("#txtIdCode").val($idcode);
+            $("#txtSucursal").prop("readonly", true);
+            $("#txtCantidad").prop("readonly", true);
+
+            if ($idcode != 0) {
+                $("#exampleModalLabel").text('Actualizar Registro');
+                jQuery.ajax({
+                    url: "@Url.Action("Obtener","cupon")" + "?idcode=" + $idcode,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        if (data != null) {
+
+                            $("#dtVigencia").attr('value',ToJavaScriptDate(data.vigencia));
+                            $("#txtSucursal").val(data.sucursal);
+                            $("#txtDescripcion").val(data.descripcion);
+                            $("#chkEstatus").prop('checked', (data.estatus));
+
+                        }
+
+                    }
+                });
+            } else {
+
+                $("#exampleModalLabel").text('Insertar Registro');
+                $("#dtVigencia").val("");
+                $("#txtSucursal").val("");
+                $("#txtDescripcion").val("");
+                $("#chkEstatus").val("");
+                $("#txtSucursal").prop("readonly", false);
+                $("#txtCantidad").prop("readonly", false);
+            }
+
+            $('#FormModal').modal('show');
+
+        }
+
+        function Guardar() {
+            var $data = {
+                oCupon: {
+                    idcode: parseInt($("#txtIdCode").val()),
+                    vigencia: $('input[name=dtVigencia]').val(),
+                    sucursal: $("#txtSucursal").val(),
+                    descripcion: $("#txtDescripcion").val(),
+                    estatus: $('input[name=chkEstatus]').prop('checked'),
+                    cantidad: $("#txtCantidad").val(),
+                }
+            }
+
+            jQuery.ajax({
+                url: "@Url.Action("Guardar", "cupon")",
+                type: "POST",
+                data: JSON.stringify($data),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.resultado) {
+                        tabla_cupon.ajax.reload();
+                        $('#FormModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert("No se pudo guardar los cambios");
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+
+                }
+            });
+
+        }
+
+        function Eliminar($idcode) {
+            if (confirm("¿Realmente desea eliminar?")) {
+               
+                jQuery.ajax({
+                    url: "@Url.Action("Eliminar", "cupon")" + "?idcode=" + $idcode,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        if (data.resultado) {
+                            location.reload();
+                            tabla_cupon.ajax.reload();
+                        }
+                    }
+                });
+
+
+            }
+        }
+
+    </script>
+
+
+
+}

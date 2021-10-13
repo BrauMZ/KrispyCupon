@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="KrispyKremeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cupon">
+          <Key>
+            <PropertyRef Name="idcode" />
+            <PropertyRef Name="cupon" />
+          </Key>
+          <Property Name="idcode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="sucursal" Type="nvarchar" MaxLength="4" Nullable="false" />
+          <Property Name="cupon" Type="varchar" MaxLength="6" Nullable="false" />
+          <Property Name="vigencia" Type="date" Nullable="false" />
+          <Property Name="estatus" Type="bit" Nullable="false" />
+          <Property Name="user_genero" Type="int" Nullable="false" />
+          <Property Name="descripcion" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="consumido" Type="bit" />
+        </EntityType>
+        <EntityContainer Name="KrispyKremeModelStoreContainer">
+          <EntitySet Name="Cupon" EntityType="Self.Cupon" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="KrispyKremeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Cupon">
+          <Key>
+            <PropertyRef Name="idcode" />
+            <PropertyRef Name="cupon1" />
+          </Key>
+          <Property Name="idcode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="sucursal" Type="String" Nullable="false" />
+          <Property Name="cupon1" Type="String" MaxLength="6" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="vigencia" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="estatus" Type="Boolean" Nullable="false" />
+          <Property Name="user_genero" Type="Int32" Nullable="false" />
+          <Property Name="descripcion" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="consumido" Type="Boolean" />
+        </EntityType>
+        <EntityContainer Name="KrispyKremeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cupon" EntityType="Self.Cupon" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="KrispyKremeModelStoreContainer" CdmEntityContainer="KrispyKremeEntities">
+          <EntitySetMapping Name="Cupon">
+            <EntityTypeMapping TypeName="KrispyKremeModel.Cupon">
+              <MappingFragment StoreEntitySet="Cupon">
+                <ScalarProperty Name="consumido" ColumnName="consumido" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="idcode" ColumnName="idcode" />
+                <ScalarProperty Name="sucursal" ColumnName="sucursal" />
+                <ScalarProperty Name="cupon1" ColumnName="cupon" />
+                <ScalarProperty Name="vigencia" ColumnName="vigencia" />
+                <ScalarProperty Name="estatus" ColumnName="estatus" />
+                <ScalarProperty Name="user_genero" ColumnName="user_genero" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
